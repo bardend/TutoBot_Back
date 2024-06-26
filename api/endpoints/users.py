@@ -4,8 +4,11 @@ from sqlalchemy.exc import DatabaseError, IntegrityError
 from sqlalchemy.orm import Session
 from fastapi import Depends
 
-from db.models import User
+from db.models import User, Questionnaire
 from db.session import SessionLocal
+from statistics import mean
+from sqlalchemy.sql import func
+
 
 router = APIRouter()
 
@@ -65,3 +68,4 @@ async def get_user_data(username: str, password: str, email: str, db: Session = 
         raise HTTPException(status_code=500, detail="Database error")
     except Exception as e:
         raise HTTPException(status_code=500, detail="An unexpected error occurred")
+

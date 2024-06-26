@@ -85,5 +85,62 @@ async def get_quiz():
     return quiz_data
 
 
+
+
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+from sqlalchemy.exc import DatabaseError, IntegrityError
+from sqlalchemy.orm import Session
+from fastapi import Depends
+
+from db.models import User, Questionnaire
+from db.session import SessionLocal
+from statistics import mean
+from sqlalchemy.sql import func
+
+
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+@router.get("/{user_id}/profile")
+async def get_user_profile(user_id: int, db: Session = Depends(get_db)):
+    for i in range(10):
+        print("Si llega")
+
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    questionnaires = db.query(Questionnaire).filter(Questionnaire.user_id == user_id).all()
+
+    total_exams = len(questionnaires) // 4
+    average_score = db.query(func.avg(Questionnaire.score)).filter(Questionnaire.user_id == user_id).scalar()
+
+    print(user.id)
+    print(total_exams)
+    return {
+        "id": user.id,
+        "username": user.username,
+        "name": user.name,
+        "email": user.email,
+        "total_exams": total_exams,
+        "average_score": float(average_score) if average_score else None
+    }
+
+
+
+
+
+
+
+
+
+
 app.include_router(api_router, prefix='/api/v1')
 app.include_router(router)
