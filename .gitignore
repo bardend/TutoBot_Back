@@ -1,3 +1,5 @@
+*.pyc
+/holi
 /pack
 /venv
 /__pycache__
