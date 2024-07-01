@@ -119,7 +119,7 @@ async def get_user_profile(user_id: int, db: Session = Depends(get_db)):
 
     questionnaires = db.query(Questionnaire).filter(Questionnaire.user_id == user_id).all()
 
-    total_exams = len(questionnaires) // 4
+    total_exams = len(questionnaires)
     average_score = db.query(func.avg(Questionnaire.score)).filter(Questionnaire.user_id == user_id).scalar()
 
     print(user.id)
